@@ -91,7 +91,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-hub:
     DependsOn:
-      - build
+      - upload-to-s3 # deploy-hub requires /webui contents in the S3 bucket
     Identifier: aws/build@v1
     Environment:
       Name: hub-account
@@ -129,6 +129,8 @@ Actions:
       Steps:
         - Run: |
             cd ./source
+            npm ci
+            npm run bootstrap
             npm run deploy -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
       Container:
         Registry: CODECATALYST
@@ -138,9 +140,9 @@ Actions:
       - build
     Identifier: aws/build@v1
     Environment:
-      Name: hub-account
+      Name: orgmgmt-account
       Connections:
-        - Name: 435185141757
+        - Name: OrgMgmt
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Artifacts:
@@ -169,6 +171,76 @@ Actions:
       Steps:
         - Run: |
             cd ./source
+            npm ci
+            npm run bootstrap
+            npm run deployOrgMgmt -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03
+  deploy-spoke1:
+    DependsOn:
+      - build
+    Identifier: aws/build@v1
+    Environment:
+      Name: orgmgmt-account
+      Connections:
+        - Name: OrgMgmt
+          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
+    Inputs:
+      Artifacts:
+        - GlobalAssets
+        - RegionalAssets
+      Sources:
+        - WorkflowSource
+      Variables:
+        - Name: LAUNCH_OPTIONS_NAMESPACE
+          Value: 'aaao-codecat'
+        - Name: LAUNCH_OPTIONS_HUB_ACC_ID
+          Value: '435185141757'
+    Outputs:
+      AutoDiscoverReports:
+        Enabled: false
+        ReportNamePrefix: rpt
+    Configuration:
+      Steps:
+        - Run: |
+            cd ./source
+            npm ci
+            npm run bootstrap
+            npm run deploySpoke -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03
+  deploy-spoke2:
+    DependsOn:
+      - build
+    Identifier: aws/build@v1
+    Environment:
+      Name: hub-account
+      Connections:
+        - Name: 435185141757
+          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
+    Inputs:
+      Artifacts:
+        - GlobalAssets
+        - RegionalAssets
+      Sources:
+        - WorkflowSource
+      Variables:
+        - Name: LAUNCH_OPTIONS_NAMESPACE
+          Value: 'aaao-codecat'
+        - Name: LAUNCH_OPTIONS_HUB_ACC_ID
+          Value: '435185141757'
+    Outputs:
+      AutoDiscoverReports:
+        Enabled: false
+        ReportNamePrefix: rpt
+    Configuration:
+      Steps:
+        - Run: |
+            cd ./source
+            npm ci
+            npm run bootstrap
             npm run deploySpoke -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
       Container:
         Registry: CODECATALYST
