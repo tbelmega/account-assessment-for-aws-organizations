@@ -8,7 +8,7 @@ Compute:
   Type: EC2
   Fleet: Linux.x86-64.Large
 Actions:
-  setup-and-echo:
+  build:
     Identifier: aws/build@v1
     Inputs:
       Sources:
@@ -36,6 +36,7 @@ Actions:
     Configuration:
       Steps:
         - Run: |
+            set -e
             cd ./deployment
             chmod +x ./build-s3-dist.sh
             pwd
@@ -43,7 +44,7 @@ Actions:
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
-  deploy-to-s3:
+  upload-to-s3:
     Identifier: aws/build@v1
     Inputs:
       Artifacts:
@@ -67,6 +68,7 @@ Actions:
     Configuration:
       Steps:
         - Run: |
+            set -e
             ASSET_BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             echo $ASSET_BUCKET_NAME
             aws s3 mb s3://$ASSET_BUCKET_NAME/
