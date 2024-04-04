@@ -46,7 +46,8 @@ Actions:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
   upload-to-s3:
-    DependsOn: build
+    DependsOn:
+      - build
     Identifier: aws/build@v1
     Environment:
       Name: hub-account
