@@ -8,9 +8,46 @@ Compute:
   Type: EC2
   Fleet: Linux.x86-64.Large
 Actions:
-  deploy:
+  setup-and-echo:
     Identifier: aws/build@v1
     Inputs:
+      Sources:
+        - WorkflowSource
+      Variables:
+        - Name: LAUNCH_OPTIONS_SOLUTION_NAME
+          Value: AccountAssessment
+        - Name: LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
+          Value: solutions-features
+        - Name: LAUNCH_OPTIONS_VERSION
+          Value: custom001
+        - Name: LAUNCH_OPTIONS_REGION
+          Value: us-east-1
+    Outputs:
+      Artifacts:
+        GlobalAssets:
+          Path: deployment/global-s3-assets
+        RegionalAssets:
+          Path: deployment/regional-s3-assets
+      AutoDiscoverReports:
+        Enabled: false
+        ReportNamePrefix: rpt
+    Configuration:
+      Steps:
+        - Run: |
+            cd ./deployment
+            chmod +x ./build-s3-dist.sh
+            pwd
+            ./build-s3-dist.sh $LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET $LAUNCH_OPTIONS_SOLUTION_NAME $LAUNCH_OPTIONS_VERSION
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03
+
+  deploy-to-s3:
+    Identifier: aws/build@v1
+    Inputs:
+      Artifacts:
+        - GlobalAssets
+        - RegionalAssets
       Sources:
         - WorkflowSource
       Variables:
@@ -29,17 +66,15 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            cd ./deployment
-            chmod +x ./build-s3-dist.sh
-            pwd
-            ./build-s3-dist.sh $LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET $LAUNCH_OPTIONS_SOLUTION_NAME $LAUNCH_OPTIONS_VERSION
-            ASSET_BUCKET_NAME=$DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
+            ASSET_BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             echo $ASSET_BUCKET_NAME
             aws s3 mb s3://$ASSET_BUCKET_NAME/
-            export BUCKET_NAME=$DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
+            BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             aws s3 ls s3://$BUCKET_NAME # test bucket exists - should not give an error
-            aws s3 cp global-s3-assets/  s3://$BUCKET_NAME/$SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
-            aws s3 cp regional-s3-assets/  s3://$BUCKET_NAME/$SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+            # Use the paths for GlobalAssets and RegionalAssets passed from previous action
+            aws s3 cp $GlobalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+            aws s3 cp $RegionalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+                 
             cd ..
       Container:
         Registry: CODECATALYST
