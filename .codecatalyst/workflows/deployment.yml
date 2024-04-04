@@ -171,6 +171,7 @@ Actions:
       Steps:
         - Run: |
             cd ./source
+            export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             npm ci
             npm run bootstrap
             npm run deployOrgMgmt -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
@@ -205,6 +206,7 @@ Actions:
       Steps:
         - Run: |
             cd ./source
+            export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             npm ci
             npm run bootstrap
             npm run deploySpoke -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
@@ -239,6 +241,7 @@ Actions:
       Steps:
         - Run: |
             cd ./source
+            export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             npm ci
             npm run bootstrap
             npm run deploySpoke -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
