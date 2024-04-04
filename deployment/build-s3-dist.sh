@@ -233,7 +233,8 @@ echo "--------------------------------------------------------------------------
 echo "${bold}[Packing] Source code artifacts${normal}"
 echo "------------------------------------------------------------------------------"
 
-# General cleanup of node_modules filesecho "find $dist_dir -iname ".venv" -type d -exec rm -rf "{}" \; 2> /dev/null"
+# General cleanup of node_modules files
+echo "find $dist_dir -iname ".venv" -type d -exec rm -rf "{}" \; 2> /dev/null"
 find $dist_dir -iname ".venv" -type d -exec rm -rf "{}" \; 2> /dev/null
 echo "find $dist_dir -iname "pytest_cache" -type d -exec rm -rf "{}" \; 2> /dev/null"
 find $dist_dir -iname "pytest_cache" -type d -exec rm -rf "{}" \; 2> /dev/null
