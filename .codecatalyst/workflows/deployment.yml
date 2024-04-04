@@ -51,9 +51,6 @@ Actions:
     Identifier: aws/build@v1
     Environment:
       Name: hub-account
-      Connections:
-        - Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
-          Name: "435185141757"
     Inputs:
       Artifacts:
         - GlobalAssets
