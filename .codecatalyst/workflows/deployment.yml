@@ -25,9 +25,9 @@ Actions:
     Outputs:
       Artifacts:
         GlobalAssets:
-          Path: deployment/global-s3-assets
+          Files: deployment/global-s3-assets/**
         RegionalAssets:
-          Path: deployment/regional-s3-assets
+          Files: deployment/regional-s3-assets
       AutoDiscoverReports:
         Enabled: false
         ReportNamePrefix: rpt
@@ -41,7 +41,6 @@ Actions:
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
-
   deploy-to-s3:
     Identifier: aws/build@v1
     Inputs:
@@ -74,7 +73,6 @@ Actions:
             # Use the paths for GlobalAssets and RegionalAssets passed from previous action
             aws s3 cp $GlobalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
             aws s3 cp $RegionalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
-                 
             cd ..
       Container:
         Registry: CODECATALYST
