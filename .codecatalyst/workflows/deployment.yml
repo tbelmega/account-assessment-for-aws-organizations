@@ -89,3 +89,87 @@ Actions:
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
+  deploy-hub:
+    DependsOn:
+      - build
+    Identifier: aws/build@v1
+    Environment:
+      Name: hub-account
+      Connections:
+        - Name: 435185141757
+          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
+    Inputs:
+      Artifacts:
+        - GlobalAssets
+        - RegionalAssets
+      Sources:
+        - WorkflowSource
+      Variables:
+        - Name: LAUNCH_OPTIONS_SOLUTION_NAME
+          Value: AccountAssessment
+        - Name: LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
+          Value: solutions-features-aaao-tbelmega
+        - Name: LAUNCH_OPTIONS_VERSION
+          Value: custom001
+        - Name: LAUNCH_OPTIONS_REGION
+          Value: us-east-1
+        - Name: LAUNCH_OPTIONS_NAMESPACE
+          Value: 'aaao-codecat'
+        - Name: LAUNCH_OPTIONS_PREFIX
+          Value: 'aaao-codecat'
+        - Name: LAUNCH_OPTIONS_EMAIL
+          Value: 'tbelmega@amazon.com'
+        - Name: LAUNCH_OPTIONS_IP_RANGES
+          Value: '0.0.0.0/1,128.0.0.0/1'
+    Outputs:
+      AutoDiscoverReports:
+        Enabled: false
+        ReportNamePrefix: rpt
+    Configuration:
+      Steps:
+        - Run: |
+            cd ./source
+            npm run deploy -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03
+  deploy-orgmgmt:
+    DependsOn:
+      - build
+    Identifier: aws/build@v1
+    Environment:
+      Name: hub-account
+      Connections:
+        - Name: 435185141757
+          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
+    Inputs:
+      Artifacts:
+        - GlobalAssets
+        - RegionalAssets
+      Sources:
+        - WorkflowSource
+      Variables:
+        - Name: LAUNCH_OPTIONS_SOLUTION_NAME
+          Value: AccountAssessment
+        - Name: LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
+          Value: solutions-features-aaao-tbelmega
+        - Name: LAUNCH_OPTIONS_VERSION
+          Value: custom001
+        - Name: LAUNCH_OPTIONS_REGION
+          Value: us-east-1
+        - Name: LAUNCH_OPTIONS_NAMESPACE
+          Value: 'aaao-codecat'
+        - Name: LAUNCH_OPTIONS_HUB_ACC_ID
+          Value: '435185141757'
+    Outputs:
+      AutoDiscoverReports:
+        Enabled: false
+        ReportNamePrefix: rpt
+    Configuration:
+      Steps:
+        - Run: |
+            cd ./source
+            npm run deploySpoke -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03

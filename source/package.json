@@ -16,12 +16,12 @@
     "test": "jest --coverage",
     "license-report": "license-report --output=csv --delimiter=' under ' --fields=name --fields=licenseType",
     "cdk": "cdk",
-    "buildLambdaAndDeploy": "cd ./../deployment && ./build-lambdas.sh && cd ../source && SOLUTION_VERSION=v1.0.0 SOLUTION_NAME=AccountAssessment DIST_OUTPUT_BUCKET=solutions-features SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-hub",
-    "deploy": "SOLUTION_VERSION=v1.0.0 SOLUTION_NAME=AccountAssessment DIST_OUTPUT_BUCKET=solutions-features SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-hub",
-    "deploySpoke": "SOLUTION_VERSION=v1.0.0 SOLUTION_NAME=AccountAssessment DIST_OUTPUT_BUCKET=solutions-features SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-spoke",
-    "deployOrgMgmt": "SOLUTION_VERSION=v1.0.0 SOLUTION_NAME=AccountAssessment DIST_OUTPUT_BUCKET=solutions-features SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-org-management",
-    "synth": "SOLUTION_VERSION=v1.0.0 SOLUTION_NAME=AccountAssessment DIST_OUTPUT_BUCKET=solutions-features SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk synth",
-    "bootstrap": "SOLUTION_VERSION=v1.0.0 SOLUTION_NAME=AccountAssessment DIST_OUTPUT_BUCKET=solutions-features SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk bootstrap"
+    "buildLambdaAndDeploy": "cd ./../deployment && ./build-lambdas.sh && cd ../source && SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-hub",
+    "deploy": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-hub",
+    "deploySpoke": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-spoke",
+    "deployOrgMgmt": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-org-management",
+    "synth": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk synth",
+    "bootstrap": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk bootstrap"
   },
   "devDependencies": {
     "@aws-cdk/assert": "2.68.0",
