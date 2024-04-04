@@ -25,9 +25,11 @@ Actions:
     Outputs:
       Artifacts:
         GlobalAssets:
-          Files: deployment/global-s3-assets/**
+          Files:
+          - 'deployment/global-s3-assets/**'
         RegionalAssets:
-          Files: deployment/regional-s3-assets
+          Files:
+          - 'deployment/regional-s3-assets/**'
       AutoDiscoverReports:
         Enabled: false
         ReportNamePrefix: rpt
