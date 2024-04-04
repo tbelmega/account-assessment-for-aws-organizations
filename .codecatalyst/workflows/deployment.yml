@@ -26,10 +26,10 @@ Actions:
       Artifacts:
         GlobalAssets:
           Files:
-          - 'deployment/global-s3-assets/**'
+          - 'deployment/global-s3-assets/*'
         RegionalAssets:
           Files:
-          - 'deployment/regional-s3-assets/**'
+          - 'deployment/regional-s3-assets/*'
       AutoDiscoverReports:
         Enabled: false
         ReportNamePrefix: rpt
@@ -41,11 +41,18 @@ Actions:
             chmod +x ./build-s3-dist.sh
             pwd
             ./build-s3-dist.sh $LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET $LAUNCH_OPTIONS_SOLUTION_NAME $LAUNCH_OPTIONS_VERSION
+            cd ..
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
   upload-to-s3:
+    DependsOn: build
     Identifier: aws/build@v1
+    Environment:
+      Name: hub-account
+      Connections:
+        - Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
+          Name: "435185141757"
     Inputs:
       Artifacts:
         - GlobalAssets
@@ -75,8 +82,8 @@ Actions:
             BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             aws s3 ls s3://$BUCKET_NAME # test bucket exists - should not give an error
             # Use the paths for GlobalAssets and RegionalAssets passed from previous action
-            aws s3 cp $GlobalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
-            aws s3 cp $RegionalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+            aws s3 cp $CATALYST_SOURCE_DIR_GlobalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+            aws s3 cp $CATALYST_SOURCE_DIR_RegionalAssets/ s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
             cd ..
       Container:
         Registry: CODECATALYST
