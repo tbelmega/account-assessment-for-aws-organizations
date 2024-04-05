@@ -112,9 +112,9 @@ Actions:
         - Name: LAUNCH_OPTIONS_REGION
           Value: us-east-1
         - Name: LAUNCH_OPTIONS_NAMESPACE
-          Value: 'aaao-codecat'
+          Value: 'aaao-ccat'
         - Name: LAUNCH_OPTIONS_PREFIX
-          Value: 'aaao-codecat'
+          Value: 'aaao-ccat'
         - Name: LAUNCH_OPTIONS_EMAIL
           Value: 'tbelmega@amazon.com'
         - Name: LAUNCH_OPTIONS_IP_RANGES
@@ -160,7 +160,7 @@ Actions:
         - Name: LAUNCH_OPTIONS_REGION
           Value: us-east-1
         - Name: LAUNCH_OPTIONS_NAMESPACE
-          Value: 'aaao-codecat'
+          Value: 'aaao-ccat'
         - Name: LAUNCH_OPTIONS_HUB_ACC_ID
           Value: '435185141757'
     Outputs:
@@ -196,7 +196,7 @@ Actions:
         - WorkflowSource
       Variables:
         - Name: LAUNCH_OPTIONS_NAMESPACE
-          Value: 'aaao-codecat'
+          Value: 'aaao-ccat'
         - Name: LAUNCH_OPTIONS_HUB_ACC_ID
           Value: '435185141757'
     Outputs:
@@ -233,7 +233,7 @@ Actions:
         - WorkflowSource
       Variables:
         - Name: LAUNCH_OPTIONS_NAMESPACE
-          Value: 'aaao-codecat'
+          Value: 'aaao-ccat'
         - Name: LAUNCH_OPTIONS_HUB_ACC_ID
           Value: '435185141757'
     Outputs:
