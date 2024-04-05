@@ -210,6 +210,7 @@ Actions:
             aws cloudformation deploy \
             --template-file account-assessment-for-aws-organizations-spoke.template \
             --stack-name AccountAssessmentSpoke \
+            --capabilities CAPABILITY_NAMED_IAM \
             --region us-east-1 \
             --parameter-overrides \
             DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE \
