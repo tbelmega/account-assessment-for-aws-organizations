@@ -185,7 +185,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-spoke1:
     DependsOn:
-      - build
+      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
     Identifier: aws/build@v1
     Environment:
       Name: orgmgmt-account
