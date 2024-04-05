@@ -77,11 +77,13 @@ Actions:
             ASSET_BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             echo $ASSET_BUCKET_NAME
             aws s3 mb s3://$ASSET_BUCKET_NAME/
+            set -e
             BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             aws s3 ls s3://$BUCKET_NAME # test bucket exists - should not give an error
-            cd $CATALYST_SOURCE_DIR_DeploymentAssets/deployment
-            aws s3 cp global-s3-assets/**/* s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
-            aws s3 cp regional-s3-assets/**/* s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+            cd $CATALYST_SOURCE_DIR_DeploymentAssets/deployment/global-s3-assets
+            aws s3 cp . s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
+            cd ../regional-s3-assets
+            aws s3 cp . s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
             cd ..
       Container:
         Registry: CODECATALYST
