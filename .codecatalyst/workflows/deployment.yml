@@ -126,19 +126,23 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            cd ./source
-            export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
-            export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
-            export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
-            npm ci
-            npm run bootstrap
-            npm run deploy -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
+            cd $CATALYST_SOURCE_DIR_DeploymentAssets/deployment/global-s3-assets
+            aws cloudformation deploy \
+            --template-file account-assessment-for-aws-organizations-hub.template \
+            --stack-name AccountAssessmentSpoke \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --region us-east-1 \
+            --parameter-overrides \
+            DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE \
+            CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX \
+            UserEmail=$LAUNCH_OPTIONS_EMAIL \ 
+            AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES \
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-orgmgmt:
     DependsOn:
-      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
+      - deploy-hub # deploy-orgmgmt requires the app to be deployed to app registry in hub account first
     Identifier: aws/build@v1
     Environment:
       Name: orgmgmt-account
@@ -182,7 +186,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-spoke1:
     DependsOn:
-      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
+      - deploy-hub # deploy-orgmgmt requires the app to be deployed to app registry in hub account first
     Identifier: aws/build@v1
     Environment:
       Name: orgmgmt-account
@@ -220,7 +224,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-spoke2:
     DependsOn:
-      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
+      - deploy-hub # deploy-orgmgmt requires the app to be deployed to app registry in hub account first
     Identifier: aws/build@v1
     Environment:
       Name: hub-account
