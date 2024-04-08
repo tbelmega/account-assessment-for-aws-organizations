@@ -136,7 +136,8 @@ Actions:
             DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE \
             CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX \
             UserEmail=$LAUNCH_OPTIONS_EMAIL \
-            AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
+            AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES \
+            --s3-bucket $LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
