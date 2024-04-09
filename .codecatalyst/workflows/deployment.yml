@@ -75,7 +75,6 @@ Actions:
         - Run: |
             echo $(aws sts get-caller-identity)
             ASSET_BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
-            echo $ASSET_BUCKET_NAME
             aws s3 mb s3://$ASSET_BUCKET_NAME/
             set -e
             BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
@@ -126,6 +125,7 @@ Actions:
     Configuration:
       Steps:
         - Run: |
+            ASSET_BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             cd $CATALYST_SOURCE_DIR_DeploymentAssets/deployment/global-s3-assets
             aws cloudformation deploy \
             --template-file account-assessment-for-aws-organizations-hub.template \
@@ -137,7 +137,7 @@ Actions:
             CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX \
             UserEmail=$LAUNCH_OPTIONS_EMAIL \
             AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES \
-            --s3-bucket $LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
+            --s3-bucket $ASSET_BUCKET_NAME
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
