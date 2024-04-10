@@ -84,9 +84,9 @@ Actions:
           Value: 'tbelmega@amazon.com'
         - Name: LAUNCH_OPTIONS_IP_RANGES
           Value: '0.0.0.0/1,128.0.0.0/1'
-        - Name: $LAUNCH_OPTIONS_ORG_ID
+        - Name: LAUNCH_OPTIONS_ORG_ID
           Value: 'o-j8ayd8hori'
-        - Name: $LAUNCH_OPTIONS_MANAGEMENT_ACCOUNT_ID
+        - Name: LAUNCH_OPTIONS_MANAGEMENT_ACCOUNT_ID
           Value: '473848609440'
     Outputs:
       AutoDiscoverReports:
