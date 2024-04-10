@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import re
-from typing import List
 
 
 def sanitize(name, space_allowed=False, replace_with_character='_'):
@@ -47,7 +46,7 @@ def trim_length_from_end(string, length):
         return string
 
 
-def trim_string_from_front(string, remove: str):
+def trim_string_from_front(string: str, remove: str):
     """ Remove string provided in the search_string
     and returns remainder of the string.
     :param string:

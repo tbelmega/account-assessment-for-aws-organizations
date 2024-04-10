@@ -91,7 +91,7 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            cd ./source
+            cd ./source/infra
             echo $(ls)
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME

@@ -37,21 +37,28 @@ class SynchronousScanStrategy(ScanStrategy):
 
 class AssessmentRunner:
     def __init__(self, scan_strategy: ScanStrategy):
+        
         self.logger = Logger(os.getenv('LOG_LEVEL'))
-        self.scan_strategy = scan_strategy
-        self.assessment_type = scan_strategy.assessment_type()
-        self.job_repository = JobsRepository()
+        try:
+            self.scan_strategy = scan_strategy
+            self.assessment_type = scan_strategy.assessment_type()
+            self.job_repository = JobsRepository()
+        except Exception as e:
+            self.logger.error('Failed to create AssessmentRunner')
+            self.logger.error(e)
+            raise e
 
     def run_assessment(
             self,
             event: APIGatewayProxyEvent,
             _context: LambdaContext,
     ) -> JobModel:
+        self.logger.debug(f"start run assessment {self.assessment_type}")
         self._raise_if_active_job()
-
         new_job: JobModel = self._create_job_entry_in_ddb(event)
+        self.logger.debug(f"inside run assessment new job model {new_job}")
         try:
-            items = self.scan_strategy.scan(new_job['JobId'], event.json_body if event.body else {})
+            items = self.scan_strategy.scan(new_job['JobId'], event.json_body if event is not None and event.body else {})
 
             if isinstance(self.scan_strategy, SynchronousScanStrategy):
                 self.scan_strategy.write(items)
@@ -67,14 +74,22 @@ class AssessmentRunner:
             self._finish_job(new_job, JobStatus.FAILED)
             raise e
 
-    def _create_job_entry_in_ddb(self, event: APIGatewayProxyEvent) -> JobModel:
-
-        new_job = self.job_repository.create_job({
-            'AssessmentType': self.assessment_type,
-            'StartedAt': datetime.now().isoformat(),
-            'StartedBy': event.request_context.authorizer.claims['email'],
-            'JobStatus': str(JobStatus.ACTIVE.value),
-        })
+    def _create_job_entry_in_ddb(self, event: APIGatewayProxyEvent | None) -> JobModel:
+        
+        if event is None:
+            new_job = self.job_repository.create_job({
+                'AssessmentType': self.assessment_type,
+                'StartedAt': datetime.now().isoformat(),
+                'StartedBy': "event-rule",
+                'JobStatus': str(JobStatus.ACTIVE.value),
+            })
+        else:
+            new_job = self.job_repository.create_job({
+                'AssessmentType': self.assessment_type,
+                'StartedAt': datetime.now().isoformat(),
+                'StartedBy': event.request_context.authorizer.claims['email'],
+                'JobStatus': str(JobStatus.ACTIVE.value),
+            })
 
         self.job_repository.put_last_job_marker(new_job)
         return new_job

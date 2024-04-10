@@ -1,0 +1,66 @@
+@startuml
+skinparam sequenceArrowColor DeepSkyBlue
+skinparam sequenceParticipantBorderColor DeepSkyBlue
+skinparam sequenceActorBorderColor DeepSkyBlue
+skinparam sequenceLifeLineBorderColor blue
+skinparam sequenceParticipantBackgroundColor DodgerBlue
+skinparam sequenceParticipantFontSize 17
+skinparam sequenceParticipantFontColor Black
+skinparam sequenceActorBackgroundColor aqua
+skinparam sequenceActorFontColor DeepSkyBlue
+skinparam sequenceActorFontSize 17
+skinparam sequenceActorFontName Aapex
+skinparam sequenceLifeLineBackgroundColor #A9DCDF
+
+title Sync Scan Workflow
+
+actor "Web UI" as ui
+box "Hub Account"
+participant "API Gateway Endpoint" as apiG
+participant "Assessment Module \n Lambda" as assessmentLambda
+note left of assessmentLambda #aqua
+    Assessment Modules:
+        Trusted Access Scan
+        Delegated Admin Accounts Scan
+end note
+participant "Assessment Runner" as assessmentRunner
+participant "Jobs Table \n DynamoDB" as jobsTable
+participant "Scan Strategy" as scanStrategy
+participant "Assessment Module \n DynamoDB" as assessmentModuleTable
+end box
+box "Management Account" #LightBlue
+participant "AWS Organizations \n Service API" as organizationsApi
+end box
+
+ui -> apiG: POST: \n /{assessment-type}/
+apiG -> assessmentLambda: start new scan
+assessmentLambda-> assessmentRunner: run assessment \n(strategy: SynchronousScanStrategy)
+assessmentRunner -> assessmentRunner: generate jobID
+assessmentRunner -> jobsTable: create job entry \n (PartitionKey: jobs)
+note left #lightyellow
+JobStatus: IN_PROGRESS
+end note
+
+jobsTable -> assessmentRunner:
+assessmentRunner -> scanStrategy: scan (jobID)
+scanStrategy -> organizationsApi: list delegated admins
+organizationsApi -> scanStrategy: accountIds
+scanStrategy -> organizationsApi: list delegated services (accountId)
+note left
+for each accountId
+end note
+organizationsApi -> scanStrategy:
+scanStrategy -> assessmentRunner: (findings: List)
+
+assessmentRunner -> jobsTable: update job status \n (PartitionKey: jobs)
+note right #lightgreen
+JobStatus: SUCCEEDED
+end note
+jobsTable -> assessmentRunner
+assessmentRunner -> scanStrategy: write findings (findings: List)
+scanStrategy -> assessmentModuleTable: findings
+assessmentModuleTable -> scanStrategy
+scanStrategy -> assessmentRunner
+assessmentRunner -> apiG: job (jobID, status, findings)
+apiG -> ui: job (jobID, status, findings)
+@enduml

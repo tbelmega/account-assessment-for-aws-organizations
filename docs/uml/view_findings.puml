@@ -1,0 +1,28 @@
+@startuml
+skinparam sequenceArrowColor DeepSkyBlue
+skinparam sequenceParticipantBorderColor DeepSkyBlue
+skinparam sequenceActorBorderColor DeepSkyBlue
+skinparam sequenceLifeLineBorderColor blue
+skinparam sequenceParticipantBackgroundColor DodgerBlue
+skinparam sequenceParticipantFontSize 17
+skinparam sequenceParticipantFontColor Black
+skinparam sequenceActorBackgroundColor aqua
+skinparam sequenceActorFontColor DeepSkyBlue
+skinparam sequenceActorFontSize 17
+skinparam sequenceActorFontName Aapex
+skinparam sequenceLifeLineBackgroundColor #A9DCDF
+
+actor "Web UI" as ui
+participant "API Gateway Endpoint" as apiG
+participant "Assessment Lambda" as rbpLambda
+participant "Assessment DynamoDB" as rbpDDB
+
+title View Findings
+
+ui -> apiG: GET: /{assessment-type} \n READ job findings
+apiG -> rbpLambda: read findings
+rbpLambda -> rbpDDB: query data
+rbpDDB -> rbpLambda:
+rbpLambda -> apiG
+apiG -> ui: display existing findings
+@enduml

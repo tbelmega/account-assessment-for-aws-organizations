@@ -1,0 +1,108 @@
+@startuml
+skinparam sequenceArrowColor DeepSkyBlue
+skinparam sequenceParticipantBorderColor DeepSkyBlue
+skinparam sequenceActorBorderColor DeepSkyBlue
+skinparam sequenceLifeLineBorderColor blue
+skinparam sequenceParticipantBackgroundColor DodgerBlue
+skinparam sequenceParticipantFontSize 17
+skinparam sequenceParticipantFontColor Black
+skinparam sequenceActorBackgroundColor aqua
+skinparam sequenceActorFontColor DeepSkyBlue
+skinparam sequenceActorFontSize 17
+skinparam sequenceActorFontName Aapex
+skinparam sequenceLifeLineBackgroundColor #A9DCDF
+
+title Async Scan Workflow
+
+actor "Web UI" as ui
+box "Hub Account"
+participant "API Gateway Endpoint" as apiG
+participant "Assessment Module \n Lambda" as assessmentLambda
+note left of assessmentLambda #aqua
+    Assessment Modules:
+        Resource-based Policy Scan
+        Identity-based Policy Scan
+        Organizations-dependency Resource Scan
+end note
+participant "Assessment Runner" as assessmentRunner
+participant "Jobs Table \n DynamoDB" as jobHandlerDDB
+participant "Scan Strategy" as scanStrategy
+participant "Assessment Module \n Step Function" as stepFunction
+participant "Assessment Module \n DynamoDB" as rbpDDB
+end box
+box "Spoke Accounts" #LightSalmon
+participant "Role" as spokeRole
+participant "Service API" as resources
+end box
+box "Management Account" #LightBlue
+participant "AWS Organizations \n Service API" as organizationsApi
+end box
+
+
+ui -> apiG: POST: \n /{assessment-type}/
+apiG -> assessmentLambda: start new scan
+assessmentLambda-> assessmentRunner: run assessment (strategy: ScanStrategy)
+assessmentRunner -> assessmentRunner: generate jobID
+assessmentRunner -> jobHandlerDDB: create job entry \n (PartitionKey: jobs)
+note left #lightyellow
+JobStatus: IN_PROGRESS
+end note
+
+jobHandlerDDB -> assessmentRunner:
+assessmentRunner -> scanStrategy: scan (jobID)
+scanStrategy -> organizationsApi: get accounts in Org/OU
+organizationsApi -> scanStrategy: accountIds
+scanStrategy -> scanStrategy: validate user input (accountIds, regions, services)
+scanStrategy --> stepFunction: start new state machine execution
+activate stepFunction
+scanStrategy -> apiG: job (jobID, status)
+apiG -> ui: job (jobID, status)
+ui -> ui: Redirect user to job details page
+
+stepFunction -> spokeRole: check role can be assumed
+note left
+for each accountId
+end note
+spokeRole -> stepFunction:
+stepFunction -> resources: describe/list resources
+resources -> stepFunction:
+stepFunction -> stepFunction: assess resource policy
+
+note left
+for each service &&
+for each region
+end note
+stepFunction -> rbpDDB: write finding
+rbpDDB -> stepFunction: write finding
+stepFunction -> jobHandlerDDB: ALT: write failed tasks \n (PartitionKey: taskFailures)
+jobHandlerDDB -> stepFunction:
+
+
+stepFunction -> jobHandlerDDB: find task failures
+note right
+end nested for each
+end note
+jobHandlerDDB -> stepFunction:
+stepFunction -> stepFunction: task failures NOT found
+note left #lightgreen
+JobStatus: SUCCEEDED
+end note
+stepFunction -> stepFunction: ALT: task failures found
+note left #LightSalmon
+JobStatus: SUCCEEDED_WITH_FAILED_TASKS
+end note
+
+stepFunction -> stepFunction: ALT: Caught error
+note left #pink
+JobStatus: FAILED
+end note
+stepFunction -> jobHandlerDDB: update job status \n (PartitionKey: jobs)
+deactivate stepFunction
+
+ui -> apiG: GET: \n refresh page to display new findings
+note right
+User can refresh at any time while scan in progress.
+All findings up to the moment of refresh will be displayed.
+end note
+apiG -> ui: show new findings
+@enduml

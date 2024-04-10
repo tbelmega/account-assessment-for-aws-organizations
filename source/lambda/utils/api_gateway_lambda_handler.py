@@ -120,8 +120,13 @@ class GenericApiGatewayEventHandler:
 
     def validate_body(self, event):
         if event.get("body"):
-            if event["headers"].get("content-type") != 'application/json' and \
-                    event["headers"].get("content-type") != 'application/json; charset=UTF-8':
+            content_type_key = "content-type"
+            for key in event["headers"].keys():
+                if key.lower() == "content-type":
+                    content_type_key = key
+                    
+            if event["headers"].get(content_type_key) != 'application/json' and \
+                    event["headers"].get(content_type_key) != 'application/json; charset=UTF-8':
                 raise ClientException(error='Invalid content-type',
                                       message='Accepting application/json or application/json; charset=UTF-8',
                                       status_code=415)

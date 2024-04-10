@@ -1,5 +1,10 @@
 #!/bin/bash
 #
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
 # This script runs all tests for the root CDK project, as well as any microservices, Lambda functions, or dependency
 # source code packages. These include unit tests, integration tests, and snapshot tests.
 #
@@ -83,6 +88,14 @@ run_webui_tests() {
  	cd $component_path
 	npm install
   npm run test:ci # run test:ci rather than test to avoid the pipeline getting stuck in watch mode
+
+  # Capture the exit status of the npm test command
+  exit_status=$?
+
+  if [ $exit_status -ne 0 ]; then
+    echo "WebUI tests failed. Exiting with status code 1."
+    exit 1
+  fi
 }
 
 run_cdk_project_tests() {
@@ -101,7 +114,15 @@ run_cdk_project_tests() {
 	# export overrideWarningsEnabled=false
 
 	# run unit tests
-	npm run test -- -u
+	npm run test
+
+  # Capture the exit status of the npm test command
+  exit_status=$?
+
+  if [ $exit_status -ne 0 ]; then
+    echo "CDK tests failed. Exiting with status code 1."
+    exit 1
+  fi
 }
 
 # Run unit tests
@@ -114,7 +135,7 @@ source_dir="$(cd $PWD/../source; pwd -P)"
 ## Create mock zip file for cdk to find needed asset
 mkdir -p ../deployment/regional-s3-assets/
 touch ../deployment/regional-s3-assets/lambda.zip
-run_cdk_project_tests $source_dir || true
+run_cdk_project_tests $source_dir/infra || true
 
 # Test the WebUI project
 run_webui_tests $source_dir/webui || true

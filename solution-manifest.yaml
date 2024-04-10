@@ -1,0 +1,12 @@
+---
+id: SO0217
+name: account-assessment-for-aws-organizations
+version: v1.0.6
+cloudformation_templates:
+  - template: account-assessment-for-aws-organizations-hub.template
+    main_template: true
+  - template: account-assessment-for-aws-organizations-org-management.template
+    main_template: true
+  - template: account-assessment-for-aws-organizations-spoke.template
+build_environment:
+  build_image: 'aws/codebuild/standard:7.0'

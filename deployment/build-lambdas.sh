@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+
+[ "$DEBUG" == 'true' ] && set -x
 deployment_dir="$PWD"
 staging_dist_dir="$deployment_dir/staging"
 build_dist_dir="$deployment_dir/regional-s3-assets"
@@ -51,3 +57,4 @@ echo "Create staging directory $staging_dist_dir"
 mkdir -p "$staging_dist_dir"
 build_python_artifacts
 package_lambda_dir
+echo "Finished build-lambdas.sh"

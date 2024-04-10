@@ -1,5 +1,5 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
+#  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#  SPDX-License-Identifier: Apache-2.0
 from datetime import datetime
 from os import getenv
 from typing import List
@@ -58,4 +58,4 @@ class TrustedAccessStrategy(SynchronousScanStrategy):
 
     def write(self, trusted_services: List[TrustedAccessCreateRequest]):
         findings = TrustedServicesRepository().create_all(trusted_services)
-        SolutionMetrics().send_metrics(self.assessment_type(), findings)
+        SolutionMetrics().send_scan_metrics(self.assessment_type(), findings)

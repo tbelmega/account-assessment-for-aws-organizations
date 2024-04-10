@@ -1,5 +1,5 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
+#  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#  SPDX-License-Identifier: Apache-2.0
 from datetime import datetime
 from os import getenv
 from typing import List, Iterable
@@ -89,4 +89,4 @@ class DelegatedAdminsStrategy(SynchronousScanStrategy):
 
     def write(self, delegated_admins: List[DelegatedAdminCreateRequest]):
         findings = DelegatedAdminsRepository().create_all(delegated_admins)
-        SolutionMetrics().send_metrics(self.assessment_type(), findings)
+        SolutionMetrics().send_scan_metrics(self.assessment_type(), findings)

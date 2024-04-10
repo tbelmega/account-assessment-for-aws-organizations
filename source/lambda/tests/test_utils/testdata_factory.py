@@ -1,14 +1,13 @@
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
+#  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#  SPDX-License-Identifier: Apache-2.0
 
 import uuid
 from datetime import datetime
-from typing import List
 
 from assessment_runner.job_model import JobStatus, JobCreateRequest
 from delegated_admins.delegated_admin_model import DelegatedAdminModel
+from policy_explorer.policy_explorer_model import DynamoDBPolicyItem
 from resource_based_policy.resource_based_policy_model import ResourceBasedPolicyResponseModel
-from resource_based_policy.supported_configuration.scan_configuration_model import ScanConfigCreateRequest
 from trusted_access_enabled_services.trusted_access_model import TrustedAccessCreateRequest
 
 
@@ -72,13 +71,39 @@ def resource_based_policies_create_request(
     }
 
 
-def scan_config_create_request(
-        account_ids: List[str],
-        configuration_name: str = uuid.uuid4().hex,
-) -> ScanConfigCreateRequest:
+def policy_create_request(
+        policy_type: str,
+        service: str = 'iam',
+        account_id: str = 'dev-account-id',
+        region: str = 'GLOBAL',
+        action: str = '["sns:Subscribe", "sns:Unsubscribe"]',
+        not_action: str = '["sns:Subscribe", "sns:Unsubscribe"]',
+        resource: str = '["arn:aws:sns:*:*:aws-controltower-SecurityNotifications"]',
+        not_resource: str = '["arn:aws:sns:*:*:aws-controltower-SecurityNotifications"]',
+        effect: str = 'Deny',
+        condition: str = '{"ArnNotLike": {"aws:PrincipalARN": "arn:aws:iam::*:role/AWSControlTowerExecution"}}',
+        principal: str = '{"Service": "ssm.amazonaws.com"}',
+        not_principal: str = '{"Service": "ssm.amazonaws.com"}',
+        job_id: str = uuid.uuid4().hex
+) -> DynamoDBPolicyItem:
     return {
-        "AccountIds": account_ids,
-        "Regions": [],
-        "ServiceNames": [],
-        "ConfigurationName": configuration_name
+        'PartitionKey': policy_type,
+        'SortKey': f'{region}#{service}#{account_id}#policy/o-j8ayd8hori/service_control_policy/p-ao427iho#{uuid.uuid4().hex}',
+        'AccountId': account_id,
+        'Action': action,
+        'NotAction': not_action,
+        'Condition': condition,
+        'Effect': effect,
+        'Policy': '{"Version": "2012-10-17", "Statement": [{"Condition": {"ArnNotLike": {"aws:PrincipalARN": "arn:aws:iam::*:role/AWSControlTowerExecution"}}, "Action": ["sns:Subscribe", "sns:Unsubscribe"], "Resource": ["arn:aws:sns:*:*:aws-controltower-SecurityNotifications"], "Effect": "Deny", "Sid": "GRSNSSUBSCRIPTIONPOLICY"}]}',
+        'Region': region,
+        'Resource': resource,
+        'NotResource': not_resource,
+        'ResourceIdentifier': 'policy/o-j8ayd8hori/service_control_policy/p-ao427iho',
+        'Service': service,
+        'Principal': principal,
+        'NotPrincipal': not_principal,
+        'Sid': 'GRSNSSUBSCRIPTIONPOLICY',
+        'JobId': job_id,
+        'AssessedAt': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+        'ExpiresAt': 1715295627
     }

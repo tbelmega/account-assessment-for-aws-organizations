@@ -5,12 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.6] - 2024-04
+## [1.1.0] - 2023-04
+
+### Added
+
+- Daily policy scan via EventBridge Rule / Step Function that records all found policies in DynamoDB
+- PolicyExplorer page on the UI
+- Ability to export all result tables as .csv
+- Support for policy scans in AWS services: AWS RAM, EventBridge Schemas, AWS Systems Manager Incident Manager Contacts,
+  Redshift, ACM-PCA and Lex v2
+- Support for Service Control Policies
+
+### Changed
+
+- Deprecated Resource Based Policy module in favor of Policy Explorer. Data from previous Resource Based Policy scans
+  can still be viewed, but cannot start new scans.
+- Upgraded Amplify library from v5 to v6
+- Upgraded mock-service-worker library from v1 to v2
+- Upgraded from create-react-app to vite
+
+### Fixed
+
+- Make handling of 'content-type' request header case-insensitive to be more resilient to API Gateway service changes
+- API error responses are now displayed on the UI properly, no longer disguised as CORS problems
+
+## [1.0.6] - 2024-03
 
 ### Fixed
 
 - Updated package versions to resolve security vulnerabilities.
-- Pinned boto3 and botocore versions to ~1.34.0
 
 ## [1.0.5] - 2023-10
 

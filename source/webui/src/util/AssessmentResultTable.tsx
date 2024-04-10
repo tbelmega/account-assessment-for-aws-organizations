@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {useCollection} from "@cloudscape-design/collection-hooks";
-import {Box, TableProps, TextFilter} from "@cloudscape-design/components";
 import Pagination from "@cloudscape-design/components/pagination";
 import {ReactElement, useState} from "react";
 import Table from "@cloudscape-design/components/table";
 import Header from "@cloudscape-design/components/header";
-import CollectionPreferences from "@cloudscape-design/components/collection-preferences";
-import {SortingState} from "@cloudscape-design/collection-hooks/dist/mjs/interfaces";
+import CollectionPreferences, {CollectionPreferencesProps} from "@cloudscape-design/components/collection-preferences";
+import {Box, TextFilter} from "@cloudscape-design/components";
+import {ColumnDefinition, SortingState} from "./Cloudscape.types.ts";
 
 export interface AssessmentResult {
   JobId: string,
@@ -18,7 +18,8 @@ export interface AssessmentResult {
 export type TableState = {
   header: string,
   start: number,
-  itemsPerPage: number
+  itemsPerPage: number,
+  contentDisplayOption?: Array<CollectionPreferencesProps.ContentDisplayItem>,
 }
 
 export const pageSizePreference = {
@@ -73,33 +74,38 @@ export const createPagination = (
   />;
 
 
-type AssessmentResultTableProps = {
+export function AssessmentResultTable(props: {
   title: string,
+  description?: string,
   data: any[],
   loading: boolean,
   sorting: { defaultState?: SortingState<any> },
   headerVariant: any,
-  tableVariant: TableProps.Variant,
+  tableVariant: 'container' | 'embedded' | 'borderless' | 'stacked' | 'full-page',
   actions: React.ReactElement<any, string | React.JSXElementConstructor<any>>,
-  columnDefinitions: Array<TableProps.ColumnDefinition<any>>
-};
-
-export function AssessmentResultTable(props: AssessmentResultTableProps) {
+  columnDefinitions: Array<ColumnDefinition<any>>
+  contentDisplayOptions?: Array<CollectionPreferencesProps.ContentDisplayOption>
+  contentDisplayItems?: Array<CollectionPreferencesProps.ContentDisplayItem>
+}) {
   const {
     title,
+    description,
     data,
     loading,
     sorting,
     headerVariant,
     tableVariant,
     actions,
-    columnDefinitions
+    columnDefinitions,
+    contentDisplayOptions,
+    contentDisplayItems,
   } = props;
 
   const [tableState, setTableState] = useState<TableState>({
     header: title,
     start: 1,
-    itemsPerPage: 20
+    itemsPerPage: 20,
+    contentDisplayOption: contentDisplayItems
   });
 
   const {
@@ -130,26 +136,37 @@ export function AssessmentResultTable(props: AssessmentResultTableProps) {
 
   const pagination = createPagination(tableState, setTableState, items);
 
-  const preferences = <CollectionPreferences
+  let preferences = <CollectionPreferences
     title="Preferences"
     pageSizePreference={pageSizePreference}
     preferences={{
-      pageSize: tableState.itemsPerPage
+      pageSize: tableState.itemsPerPage,
+      contentDisplay: contentDisplayItems
     }}
     onConfirm={(e) => {
       setTableState({
         ...tableState,
-        itemsPerPage: e.detail.pageSize || 20
+        itemsPerPage: e.detail.pageSize || 20,
+        contentDisplayOption: e.detail.contentDisplay?.map(item => { return {
+          id: item.id,
+          visible: item.visible
+        }})
       });
     }}
     confirmLabel="Confirm"
     cancelLabel="Cancel"
+    contentDisplayPreference={{options: contentDisplayOptions? contentDisplayOptions: []}}
   />;
-
+  
   return <Table
     {...collectionProps}
-    header={<Header variant={headerVariant} actions={actions}
-                    counter={`(${items.length})`}>{tableState.header}</Header>}
+    header={<Header
+      variant={headerVariant}
+      actions={actions}
+      description={description}
+      counter={`(${items.length})`}>
+      {tableState.header}
+    </Header>}
     variant={tableVariant}
     loading={loading}
     loadingText={'Loading resources'}
@@ -170,16 +187,26 @@ export function AssessmentResultTable(props: AssessmentResultTableProps) {
       tableState.start * tableState.itemsPerPage
     )}
     wrapLines={true}
+    columnDisplay={tableState.contentDisplayOption}
   ></Table>
 }
 
-export function FullPageAssessmentResultTable({title, data, loading, actions, columnDefinitions, defaultSorting}: {
+export function FullPageAssessmentResultTable({
+                                                title,
+                                                description,
+                                                data,
+                                                loading,
+                                                actions,
+                                                columnDefinitions,
+                                                defaultSorting
+                                              }: {
   title: string,
+  description?: string,
   data: any[],
   loading: boolean,
   actions: ReactElement,
-  columnDefinitions: Array<TableProps.ColumnDefinition<any>>,
-  defaultSorting?: TableProps.SortingState<any>
+  columnDefinitions: Array<ColumnDefinition<any>>,
+  defaultSorting?: SortingState<any>
 }) {
 
   const tableVariant = "full-page";
@@ -192,6 +219,7 @@ export function FullPageAssessmentResultTable({title, data, loading, actions, co
   };
   return AssessmentResultTable({
     title,
+    description,
     data,
     loading,
     sorting,
@@ -202,12 +230,14 @@ export function FullPageAssessmentResultTable({title, data, loading, actions, co
   });
 }
 
-export function ContainerAssessmentResultTable({title, data, loading, actions, columnDefinitions}: {
+export function ContainerAssessmentResultTable({title, data, loading, actions, columnDefinitions, contentDisplayOptions, contentDisplayItems}: {
   title: string,
   data: any[],
   loading: boolean,
   actions: ReactElement,
-  columnDefinitions: Array<TableProps.ColumnDefinition<any>>
+  columnDefinitions: Array<ColumnDefinition<any>>,
+  contentDisplayOptions?: Array<CollectionPreferencesProps.ContentDisplayOption>
+  contentDisplayItems?: Array<CollectionPreferencesProps.ContentDisplayItem>
 }) {
 
   const tableVariant = "container";
@@ -221,6 +251,8 @@ export function ContainerAssessmentResultTable({title, data, loading, actions, c
     headerVariant,
     tableVariant,
     actions,
-    columnDefinitions
+    columnDefinitions,
+    contentDisplayOptions,
+    contentDisplayItems,
   });
 }

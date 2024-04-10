@@ -1,0 +1,26 @@
+@startuml
+skinparam sequenceArrowColor DeepSkyBlue
+skinparam sequenceParticipantBorderColor DeepSkyBlue
+skinparam sequenceActorBorderColor DeepSkyBlue
+skinparam sequenceLifeLineBorderColor blue
+skinparam sequenceParticipantBackgroundColor DodgerBlue
+skinparam sequenceParticipantFontSize 17
+skinparam sequenceParticipantFontColor Black
+skinparam sequenceActorBackgroundColor aqua
+skinparam sequenceActorFontColor DeepSkyBlue
+skinparam sequenceActorFontSize 17
+skinparam sequenceActorFontName Aapex
+skinparam sequenceLifeLineBackgroundColor #A9DCDF
+
+actor "Web UI" as ui
+participant "API Gateway Endpoint" as apiG
+participant "Job Handler Module" as jobHandler
+
+title View main Page
+
+ui -> apiG: GET: /jobs/
+apiG -> jobHandler: get latest job per module
+jobHandler -> apiG: get latest job per module
+apiG -> ui : show latest jobs
+
+@enduml

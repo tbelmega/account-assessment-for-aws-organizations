@@ -105,3 +105,48 @@ def test_returns_400_on_invalid_json_body():
 
     # ASSERT
     assert response['statusCode'] == 400
+    
+    
+def test_content_type_should_be_case_insensitive():
+    # ARRANGE
+    def handler_function(_event, _context):
+        return {"foo": "bar"}
+
+    event = {
+        'body': '{}',
+        'headers': {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    # ACT
+    response = GenericApiGatewayEventHandler().handle_and_create_response(event, LambdaContext(), handler_function)
+
+    # ASSERT
+    assert response['statusCode'] == 200
+
+    event = {
+        'body': '{}',
+        'headers': {
+            'ConTent-Type': 'application/json'
+        }
+    }
+
+    # ACT
+    response = GenericApiGatewayEventHandler().handle_and_create_response(event, LambdaContext(), handler_function)
+
+    # ASSERT
+    assert response['statusCode'] == 200
+    
+    event = {
+        'body': '{}',
+        'headers': {
+            'CONTENT-TYPE': 'application/json'
+        }
+    }
+
+    # ACT
+    response = GenericApiGatewayEventHandler().handle_and_create_response(event, LambdaContext(), handler_function)
+
+    # ASSERT
+    assert response['statusCode'] == 200
