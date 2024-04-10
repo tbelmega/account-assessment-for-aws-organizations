@@ -107,6 +107,15 @@ Actions:
             --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES \
             --parameters OrganizationID=$LAUNCH_OPTIONS_ORG_ID \
             --parameters ManagementAccountId=$LAUNCH_OPTIONS_MANAGEMENT_ACCOUNT_ID
+        - Run: |
+            aws create-stack-set --stack-set-name AccountAssessment-Spoke \
+              --capabilities CAPABILITY_NAMED_IAM \
+              --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE,HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
+            aws cloudformation create-stack-instances \
+                --stack-set-name <STACK_SET_NAME> \
+                --deployment-targets OrganizationalUnitIds=['r-root'] \
+                --regions <REGION1> <REGION2> ... \
+                --operation-preferences FailureToleranceCount=0,MaxConcurrentPercentage=100,RegionConcurrencyType=PARALLEL
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
@@ -147,6 +156,54 @@ Actions:
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
             npm run bootstrap
             npm run deployOrgMgmt:CI -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
+      Container:
+        Registry: CODECATALYST
+        Image: CodeCatalystLinux_x86_64:2024_03
+  deploy-spokes:
+    DependsOn:
+      - deploy-orgmgmt
+    Identifier: aws/build@v1
+    Environment:
+      Name: hub-account
+      Connections:
+        - Name: 435185141757
+          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
+    Inputs:
+      Variables:
+        - Name: LAUNCH_OPTIONS_SOLUTION_NAME
+          Value: AccountAssessment
+        - Name: LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
+          Value: solutions-features-aaao-tbelmega
+        - Name: LAUNCH_OPTIONS_VERSION
+          Value: custom001
+        - Name: LAUNCH_OPTIONS_REGION
+          Value: us-west-2
+        - Name: LAUNCH_OPTIONS_NAMESPACE
+          Value: 'aaao-ccat'
+        - Name: LAUNCH_OPTIONS_HUB_ACC_ID
+          Value: '435185141757'
+    Outputs:
+      AutoDiscoverReports:
+        Enabled: false
+        ReportNamePrefix: rpt
+    Configuration:
+      Steps:
+        - Run: |
+            cd ./source/infra
+            set +e
+            aws cloudformation create-stack-set --stack-set-name AccountAssessment-Spokes \
+              --template-body file://cdk.out/account-assessment-for-aws-organizations-spoke.template.json \
+              --permission-model SERVICE_MANAGED \
+              --auto-deployment Enabled=true,RetainStacksOnAccountRemoval=false \
+              --capabilities CAPABILITY_NAMED_IAM \
+              --parameters ParameterKey=DeploymentNamespace,ParameterValue=$LAUNCH_OPTIONS_NAMESPACE \
+                ParameterKey=HubAccountId,ParameterValue=$LAUNCH_OPTIONS_HUB_ACC_ID
+            set -e
+            aws cloudformation create-stack-instances \
+                --stack-set-name AccountAssessment-Spokes \
+                --deployment-targets OrganizationalUnitIds=\['r-3xiq'\] \
+                --regions us-east-1 us-west-2 \
+                --operation-preferences FailureToleranceCount=0,MaxConcurrentPercentage=100,RegionConcurrencyType=PARALLEL
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
