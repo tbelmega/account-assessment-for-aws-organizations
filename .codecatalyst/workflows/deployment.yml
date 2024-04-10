@@ -67,8 +67,6 @@ Actions:
         - Name: 435185141757
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Sources:
-        - WorkflowSource
       Variables:
         - Name: LAUNCH_OPTIONS_SOLUTION_NAME
           Value: AccountAssessment
@@ -113,8 +111,6 @@ Actions:
         - Name: OrgMgmt
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Sources:
-        - WorkflowSource
       Variables:
         - Name: LAUNCH_OPTIONS_SOLUTION_NAME
           Value: AccountAssessment
@@ -155,8 +151,6 @@ Actions:
         - Name: OrgMgmt
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Sources:
-        - WorkflowSource
       Variables:
         - Name: LAUNCH_OPTIONS_NAMESPACE
           Value: 'aaao-ccat'
@@ -191,8 +185,6 @@ Actions:
         - Name: 435185141757
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Sources:
-        - WorkflowSource
       Variables:
         - Name: LAUNCH_OPTIONS_NAMESPACE
           Value: 'aaao-ccat'
