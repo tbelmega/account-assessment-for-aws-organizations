@@ -10,6 +10,11 @@ Compute:
 Actions:
   build:
     Identifier: aws/build@v1
+    Environment:
+      Name: hub-account
+      Connections:
+        - Name: 435185141757
+          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Sources:
         - WorkflowSource
