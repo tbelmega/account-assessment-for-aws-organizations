@@ -11,8 +11,10 @@
     "cdk": "./node_modules/.bin/cdk",
     "buildLambdaAndDeploy": "cd ../../deployment && ./build-lambdas.sh && cd ../source/infra && cdk deploy account-assessment-for-aws-organizations-hub",
     "deploy": "cdk deploy account-assessment-for-aws-organizations-hub",
+    "deploy:CI": "npx cdk deploy account-assessment-for-aws-organizations-hub --require-approval never",
     "deploySpoke": "cdk deploy account-assessment-for-aws-organizations-spoke",
     "deployOrgMgmt": "cdk deploy account-assessment-for-aws-organizations-org-management",
+    "deployOrgMgmt:CI": "npx cdk deploy account-assessment-for-aws-organizations-org-management --require-approval never",
     "synth": "cdk synth",
     "bootstrap": "cdk bootstrap"
   },
