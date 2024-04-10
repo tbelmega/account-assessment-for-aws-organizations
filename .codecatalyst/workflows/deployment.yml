@@ -96,7 +96,6 @@ Actions:
       Steps:
         - Run: |
             cd ./source/infra
-            echo $(ls)
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export SOLUTION_TRADEMARKEDNAME=$LAUNCH_OPTIONS_SOLUTION_NAME
@@ -141,13 +140,13 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            cd ./source
+            cd ./source/infra
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export SOLUTION_TRADEMARKEDNAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
             npm run bootstrap
-            npm run deployOrgMgmt -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
+            npm run deployOrgMgmt:CI -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
