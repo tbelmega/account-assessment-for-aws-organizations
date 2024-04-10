@@ -53,7 +53,8 @@ Actions:
             set -e
             BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             aws s3 ls s3://$BUCKET_NAME # test bucket exists - should not give an error
-            cd $CATALYST_SOURCE_DIR_Assets/deployment/global-s3-assets
+            echo $(ls)
+            cd ./deployment/global-s3-assets
             aws s3 cp . s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
             cd ../regional-s3-assets
             aws s3 cp . s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
