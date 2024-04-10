@@ -95,6 +95,7 @@ Actions:
             echo $(ls)
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
+            export SOLUTION_TRADEMARKEDNAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
             npm run bootstrap
             npm run deploy:CI -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
@@ -134,6 +135,7 @@ Actions:
             cd ./source
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
+            export SOLUTION_TRADEMARKEDNAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
             npm run bootstrap
             npm run deployOrgMgmt -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
