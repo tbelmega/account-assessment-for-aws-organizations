@@ -47,7 +47,7 @@ Actions:
             set -e
             BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
             aws s3 ls s3://$BUCKET_NAME # test bucket exists - should not give an error
-            cd $CATALYST_SOURCE_DIR_DeploymentAssets/deployment/global-s3-assets
+            cd $CATALYST_SOURCE_DIR_Assets/deployment/global-s3-assets
             aws s3 cp . s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
             cd ../regional-s3-assets
             aws s3 cp . s3://$BUCKET_NAME/$LAUNCH_OPTIONS_SOLUTION_NAME/$LAUNCH_OPTIONS_VERSION/ --recursive --acl bucket-owner-full-control
@@ -114,7 +114,7 @@ Actions:
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Artifacts:
-        - DeploymentAssets
+        - Assets
       Sources:
         - WorkflowSource
       Variables:
@@ -158,7 +158,7 @@ Actions:
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Artifacts:
-        - DeploymentAssets
+        - Assets
       Sources:
         - WorkflowSource
       Variables:
@@ -173,7 +173,7 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            cd $CATALYST_SOURCE_DIR_DeploymentAssets/deployment/global-s3-assets
+            cd $CATALYST_SOURCE_DIR_Assets/deployment/global-s3-assets
             aws cloudformation deploy \
             --template-file account-assessment-for-aws-organizations-spoke.template \
             --stack-name AccountAssessmentSpoke \
@@ -196,7 +196,7 @@ Actions:
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Artifacts:
-        - DeploymentAssets
+        - Assets
       Sources:
         - WorkflowSource
       Variables:
