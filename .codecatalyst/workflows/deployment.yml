@@ -98,6 +98,8 @@ Actions:
     Configuration:
       Steps:
         - Run: |
+            cd $CATALYST_SOURCE_DIR_Assets
+            echo $(ls)
             cd ./source
             echo $(ls)
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
