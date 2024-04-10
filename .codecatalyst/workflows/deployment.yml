@@ -24,10 +24,9 @@ Actions:
           Value: us-east-1
     Outputs:
       Artifacts:
-        DeploymentAssets:
+        Assets:
           Files:
-          - 'deployment/global-s3-assets/**/*'
-          - 'deployment/regional-s3-assets/**/*'
+          - '**/*'
       AutoDiscoverReports:
         Enabled: false
         ReportNamePrefix: rpt
@@ -40,38 +39,6 @@ Actions:
             pwd
             ./build-s3-dist.sh $LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET $LAUNCH_OPTIONS_SOLUTION_NAME $LAUNCH_OPTIONS_VERSION
             cd ..
-      Container:
-        Registry: CODECATALYST
-        Image: CodeCatalystLinux_x86_64:2024_03
-  upload-to-s3:
-    DependsOn:
-      - build
-    Identifier: aws/build@v1
-    Environment:
-      Name: hub-account
-      Connections:
-        - Name: 435185141757
-          Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
-    Inputs:
-      Artifacts:
-        - DeploymentAssets
-      Sources:
-        - WorkflowSource
-      Variables:
-        - Name: LAUNCH_OPTIONS_SOLUTION_NAME
-          Value: AccountAssessment
-        - Name: LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
-          Value: solutions-features-aaao-tbelmega
-        - Name: LAUNCH_OPTIONS_VERSION
-          Value: custom001
-        - Name: LAUNCH_OPTIONS_REGION
-          Value: us-east-1
-    Outputs:
-      AutoDiscoverReports:
-        Enabled: false
-        ReportNamePrefix: rpt
-    Configuration:
-      Steps:
         - Run: |
             echo $(aws sts get-caller-identity)
             ASSET_BUCKET_NAME=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET-$LAUNCH_OPTIONS_REGION
@@ -90,7 +57,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-hub:
     DependsOn:
-      - upload-to-s3 # deploy-hub requires /webui contents in the S3 bucket
+      - build
     Identifier: aws/build@v1
     Environment:
       Name: hub-account
@@ -99,7 +66,7 @@ Actions:
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Artifacts:
-        - DeploymentAssets
+        - Assets
       Sources:
         - WorkflowSource
       Variables:
@@ -126,11 +93,11 @@ Actions:
     Configuration:
       Steps:
         - Run: |
+            echo $(ls)
             cd ./source
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
-            npm ci
             npm run bootstrap
             npm run deploy -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
       Container:
@@ -138,7 +105,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-orgmgmt:
     DependsOn:
-      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
+      - deploy-hub
     Identifier: aws/build@v1
     Environment:
       Name: orgmgmt-account
@@ -182,7 +149,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-spoke1:
     DependsOn:
-      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
+      - deploy-hub
     Identifier: aws/build@v1
     Environment:
       Name: orgmgmt-account
@@ -220,7 +187,7 @@ Actions:
         Image: CodeCatalystLinux_x86_64:2024_03
   deploy-spoke2:
     DependsOn:
-      - upload-to-s3 # deploy-spoke requires the template to be in the S3 bucket
+      - deploy-hub
     Identifier: aws/build@v1
     Environment:
       Name: hub-account
