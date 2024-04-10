@@ -29,10 +29,6 @@ Actions:
         - Name: LAUNCH_OPTIONS_REGION
           Value: us-west-2
     Outputs:
-      Artifacts:
-        Assets:
-          Files:
-          - '**/*'
       AutoDiscoverReports:
         Enabled: false
         ReportNamePrefix: rpt
@@ -71,8 +67,6 @@ Actions:
         - Name: 435185141757
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Artifacts:
-        - Assets
       Sources:
         - WorkflowSource
       Variables:
@@ -99,8 +93,6 @@ Actions:
     Configuration:
       Steps:
         - Run: |
-            cd $CATALYST_SOURCE_DIR_Assets
-            echo $(ls)
             cd ./source
             echo $(ls)
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
@@ -121,8 +113,6 @@ Actions:
         - Name: OrgMgmt
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Artifacts:
-        - Assets
       Sources:
         - WorkflowSource
       Variables:
@@ -165,8 +155,6 @@ Actions:
         - Name: OrgMgmt
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Artifacts:
-        - Assets
       Sources:
         - WorkflowSource
       Variables:
@@ -203,8 +191,6 @@ Actions:
         - Name: 435185141757
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
-      Artifacts:
-        - Assets
       Sources:
         - WorkflowSource
       Variables:
