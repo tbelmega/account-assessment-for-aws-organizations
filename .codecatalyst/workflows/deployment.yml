@@ -97,7 +97,7 @@ Actions:
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
             npm run bootstrap
-            npm run deploy -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
+            npm run deploy:CI -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters CognitoDomainPrefix=$LAUNCH_OPTIONS_PREFIX --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
@@ -135,7 +135,6 @@ Actions:
             export SOLUTION_VERSION=$LAUNCH_OPTIONS_VERSION
             export SOLUTION_NAME=$LAUNCH_OPTIONS_SOLUTION_NAME
             export DIST_OUTPUT_BUCKET=$LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
-            npm ci
             npm run bootstrap
             npm run deployOrgMgmt -- --parameters DeploymentNamespace=$LAUNCH_OPTIONS_NAMESPACE --parameters HubAccountId=$LAUNCH_OPTIONS_HUB_ACC_ID
       Container:

@@ -18,6 +18,7 @@
     "cdk": "cdk",
     "buildLambdaAndDeploy": "cd ./../deployment && ./build-lambdas.sh && cd ../source && SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations cdk deploy account-assessment-for-aws-organizations-hub",
     "deploy": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations npx cdk deploy account-assessment-for-aws-organizations-hub",
+    "deploy:CI": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations npx cdk deploy account-assessment-for-aws-organizations-hub --require-approval never",
     "deploySpoke": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations npx cdk deploy account-assessment-for-aws-organizations-spoke",
     "deployOrgMgmt": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations npx cdk deploy account-assessment-for-aws-organizations-org-management",
     "synth": "SOLUTION_TRADEMARKEDNAME=account-assessment-for-aws-organizations npx cdk synth",
