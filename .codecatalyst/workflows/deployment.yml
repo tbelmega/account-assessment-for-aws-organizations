@@ -107,7 +107,7 @@ Actions:
             --parameters UserEmail=$LAUNCH_OPTIONS_EMAIL  \
             --parameters AllowListedIPRanges=$LAUNCH_OPTIONS_IP_RANGES \
             --parameters OrganizationID=$LAUNCH_OPTIONS_ORG_ID \
-            --parameters ManagementAccountID=$LAUNCH_OPTIONS_MANAGEMENT_ACCOUNT_ID
+            --parameters ManagementAccountId=$LAUNCH_OPTIONS_MANAGEMENT_ACCOUNT_ID
       Container:
         Registry: CODECATALYST
         Image: CodeCatalystLinux_x86_64:2024_03
