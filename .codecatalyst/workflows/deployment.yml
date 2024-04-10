@@ -7,6 +7,7 @@ Triggers:
 Compute:
   Type: EC2
   Fleet: Linux.x86-64.Large
+  SharedInstance: true
 Actions:
   build:
     Identifier: aws/build@v1
