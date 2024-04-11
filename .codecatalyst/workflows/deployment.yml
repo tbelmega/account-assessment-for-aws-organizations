@@ -155,7 +155,7 @@ Actions:
       - deploy-orgmgmt
     Identifier: aws/build@v1
     Environment:
-      Name: hub-account
+      Name: orgmgmt-account
       Connections:
         - Name: 435185141757
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
