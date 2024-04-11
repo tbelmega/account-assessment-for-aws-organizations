@@ -71,7 +71,7 @@ Actions:
         - Name: LAUNCH_OPTIONS_SOLUTION_NAME
           Value: AccountAssessment
         - Name: LAUNCH_OPTIONS_DIST_OUTPUT_BUCKET
-          Value: solutions-features-aaao-tbelmega
+          Value: solutions-poc
         - Name: LAUNCH_OPTIONS_VERSION
           Value: custom001
         - Name: LAUNCH_OPTIONS_REGION
@@ -157,7 +157,7 @@ Actions:
     Environment:
       Name: orgmgmt-account
       Connections:
-        - Name: 435185141757
+        - Name: OrgMgmt
           Role: CodeCatalystWorkflowDevelopmentRole-tbelmega
     Inputs:
       Variables:
